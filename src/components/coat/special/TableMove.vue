@@ -1,6 +1,7 @@
 <script lang="ts">
 import { PPTStore } from '@/store/ppt'
 import { ITable } from '@/store/pptInterface'
+import { afterFindElement } from '@/utils/FormatParma'
 import { Vue, Component } from 'vue-property-decorator'
 @Component
 export default class TableMoveCoat extends Vue {
@@ -38,14 +39,12 @@ export default class TableMoveCoat extends Vue {
     this.con.removeEventListener('mousedown', this.down)
     document.removeEventListener('mousemove', this.move)
     document.removeEventListener('mouseup', this.up)
-    PPTStore.setElementBaseInfo({
-      i: PPTStore.pptIndex,
-      j: PPTStore.activeIndex,
-      data: {
+    PPTStore.setElementBaseInfo(
+      afterFindElement({
         top: this.newStartPosition[1],
         left: this.newStartPosition[0]
-      }
-    })
+      })
+    )
   }
 }
 </script>

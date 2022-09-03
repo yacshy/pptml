@@ -5,6 +5,7 @@
 <script lang="ts">
 import { PPTStore } from '@/store/ppt'
 import { IEleType } from '@/store/pptInterface'
+import { afterFindElement } from '@/utils/FormatParma'
 import { Vue, Component, Ref } from 'vue-property-decorator'
 @Component
 export default class LeftCoat extends Vue {
@@ -59,14 +60,12 @@ export default class LeftCoat extends Vue {
   up(): void {
     document.removeEventListener('mousemove', this.move)
     document.removeEventListener('mouseup', this.up)
-    PPTStore.setElementBaseInfo({
-      i: PPTStore.pptIndex,
-      j: PPTStore.activeIndex,
-      data: {
+    PPTStore.setElementBaseInfo(
+      afterFindElement({
         left: this.active.left + this.offset,
         width: this.active.width - this.offset
-      }
-    })
+      })
+    )
   }
 }
 </script>

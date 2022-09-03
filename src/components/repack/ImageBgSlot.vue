@@ -24,6 +24,7 @@
 
 <script lang="ts">
 import { PPTStore } from '@/store/ppt'
+import { afterFindPpt } from '@/utils/FormatParma'
 import { Vue, Component, Ref } from 'vue-property-decorator'
 @Component
 export default class ImageBackgroundSlot extends Vue {
@@ -40,10 +41,7 @@ export default class ImageBackgroundSlot extends Vue {
   }
 
   setType(imageType: string): void {
-    PPTStore.setPPTBaseInfo({
-      index: PPTStore.pptIndex,
-      data: { imageType }
-    })
+    PPTStore.setPPTBaseInfo(afterFindPpt({ imageType }))
   }
 
   getImage(): void {
@@ -53,12 +51,9 @@ export default class ImageBackgroundSlot extends Vue {
     const reader = new FileReader()
     reader.readAsDataURL(files[0])
     reader.onload = () => {
-      PPTStore.setPPTBaseInfo({
-        index: PPTStore.pptIndex,
-        data: {
-          imageUrl: reader.result as string
-        }
-      })
+      PPTStore.setPPTBaseInfo(
+        afterFindPpt({ imageUrl: reader.result as string })
+      )
     }
   }
 

@@ -9,6 +9,7 @@
 
 <script lang="ts">
 import { PPTStore } from '@/store/ppt'
+import { afterFindPpt } from '@/utils/FormatParma'
 import { Vue, Component, Ref } from 'vue-property-decorator'
 @Component({
   components: {}
@@ -20,12 +21,7 @@ export default class SolidBackgroundSlot extends Vue {
   }
 
   setPPTBackground(): void {
-    PPTStore.setPPTBaseInfo({
-      index: PPTStore.pptIndex,
-      data: {
-        solid: this.picker.value
-      }
-    })
+    PPTStore.setPPTBaseInfo(afterFindPpt({ solid: this.picker.value }))
   }
 }
 </script>

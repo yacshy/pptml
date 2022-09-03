@@ -80,8 +80,9 @@ export default class PPT extends VuexModule implements IPPTState {
   useCurrentBGToAllPPt(index: number): void {
     const bg = this.list[index].background
     for (let i = 0; i < this.list.length; i++) {
-      if (i === index) return
-      this.list[i].background = { ...bg }
+      if (i !== index) {
+        this.list[i].background = JSON.parse(JSON.stringify(bg))
+      }
     }
   }
 

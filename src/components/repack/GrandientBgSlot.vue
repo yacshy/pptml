@@ -31,6 +31,7 @@
 
 <script lang="ts">
 import { PPTStore } from '@/store/ppt'
+import { afterFindPpt } from '@/utils/FormatParma'
 import { Vue, Component, Ref } from 'vue-property-decorator'
 @Component({
   components: {}
@@ -52,28 +53,19 @@ export default class GrandientBackgroundSlot extends Vue {
   }
 
   setType(grandientType: string): void {
-    PPTStore.setPPTBaseInfo({
-      index: PPTStore.pptIndex,
-      data: { grandientType }
-    })
+    PPTStore.setPPTBaseInfo(afterFindPpt({ grandientType }))
   }
 
   seStartColor(): void {
-    PPTStore.setPPTBaseInfo({
-      index: PPTStore.pptIndex,
-      data: {
-        grandientStart: this.startPicker.value
-      }
-    })
+    PPTStore.setPPTBaseInfo(
+      afterFindPpt({ grandientStart: this.startPicker.value })
+    )
   }
 
   setEndColor(): void {
-    PPTStore.setPPTBaseInfo({
-      index: PPTStore.pptIndex,
-      data: {
-        grandientEnd: this.endPicker.value
-      }
-    })
+    PPTStore.setPPTBaseInfo(
+      afterFindPpt({ grandientEnd: this.endPicker.value })
+    )
   }
 }
 </script>

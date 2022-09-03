@@ -29,6 +29,7 @@ import { toPng } from 'html-to-image'
 import { PPTStore } from '@/store/ppt'
 import { IPPT } from '@/store/pptInterface'
 import { initPPT } from '@/utils/InitPPTElement'
+import { afterFindPpt } from '@/utils/FormatParma'
 import draggable from 'vuedraggable'
 import { Vue, Component } from 'vue-property-decorator'
 @Component({
@@ -50,10 +51,7 @@ export default class Creator extends Vue {
       if (throttleFlag) {
         setTimeout(() => {
           toPng(ele).then((url: string) => {
-            PPTStore.setPPTBaseInfo({
-              index: PPTStore.pptIndex,
-              data: { cover: url }
-            })
+            PPTStore.setPPTBaseInfo(afterFindPpt({ cover: url }))
           })
           throttleFlag = true
         }, 200)

@@ -1,6 +1,7 @@
 <script lang="ts">
 import { PPTStore } from '@/store/ppt'
 import { ITable } from '@/store/pptInterface'
+import { afterFindPpt } from '@/utils/FormatParma'
 import { Vue, Component } from 'vue-property-decorator'
 @Component
 export default class TableSwitchCoat extends Vue {
@@ -22,10 +23,7 @@ export default class TableSwitchCoat extends Vue {
 
   deleteMe(e: KeyboardEvent): void {
     if (!(this.active && e.keyCode === 8) || this.isActiveCell) return
-    PPTStore.delElement({
-      index: PPTStore.pptIndex,
-      data: PPTStore.activeIndex
-    })
+    PPTStore.delElement(afterFindPpt(PPTStore.activeIndex))
     document.removeEventListener('keydown', this.deleteMe)
   }
 }

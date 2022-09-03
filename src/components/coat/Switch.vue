@@ -1,6 +1,7 @@
 <script lang="ts">
 import { PPTStore } from '@/store/ppt'
 import { IEleType } from '@/store/pptInterface'
+import { afterFindPpt } from '@/utils/FormatParma'
 import { Vue, Component } from 'vue-property-decorator'
 @Component
 export default class SwitchCoat extends Vue {
@@ -20,10 +21,7 @@ export default class SwitchCoat extends Vue {
 
   deleteMe(e: KeyboardEvent): void {
     if (!(this.active && e.keyCode === 8)) return
-    PPTStore.delElement({
-      index: PPTStore.pptIndex,
-      data: PPTStore.activeIndex
-    })
+    PPTStore.delElement(afterFindPpt(PPTStore.activeIndex))
     document.removeEventListener('keydown', this.deleteMe)
   }
 }

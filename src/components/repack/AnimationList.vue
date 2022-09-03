@@ -20,6 +20,7 @@
 <script lang="ts">
 import CombinedVueInstance from 'vue'
 import { PPTStore } from '@/store/ppt'
+import { afterFindPpt } from '@/utils/FormatParma'
 import { ITypeAnimation } from '@/configs/animation'
 import { Vue, Component, Prop } from 'vue-property-decorator'
 @Component
@@ -45,7 +46,7 @@ export default class AnimationList extends Vue {
       value,
       activeId: PPTStore.activeId
     }
-    PPTStore.pushAnimation({ index: PPTStore.pptIndex, data })
+    PPTStore.pushAnimation(afterFindPpt(data))
     this.$bus.$emit('call-animationvue-display-animation', data)
   }
 }

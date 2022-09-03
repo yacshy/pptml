@@ -53,6 +53,7 @@
 <script lang="ts">
 import CombinedVueInstance from 'vue'
 import { PPTStore } from '@/store/ppt'
+import { afterFindElement } from '@/utils/FormatParma'
 import { CLIPPATHS, IEllipse, IPolygon, IRect } from '@/configs/imageClip'
 import { Vue, Component } from 'vue-property-decorator'
 @Component
@@ -63,16 +64,14 @@ export default class ClipList extends Vue {
   }
 
   setClipPath(clip: IEllipse | IPolygon | IRect): void {
-    PPTStore.setImageElementClip({
-      i: PPTStore.pptIndex,
-      j: PPTStore.activeIndex,
-      data: {
+    PPTStore.setImageElementClip(
+      afterFindElement({
         name: clip.name,
         shape: clip.type,
         style: clip.style,
         radius: clip.type === 'rect' ? clip.radius : '0%'
-      }
-    })
+      })
+    )
     this.$bus.$emit(
       'call-insertImageVue-ready-to-clipping-image',
       PPTStore.activeId
