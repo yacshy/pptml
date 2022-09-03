@@ -1,0 +1,5 @@
+@mixin radius {
+  ::v-deep(.ant-select-selection) {
+    border-radius: 0;
+  }
+}

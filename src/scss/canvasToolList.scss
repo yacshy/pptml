@@ -1,0 +1,38 @@
+@mixin canvas-tool-list {
+  .prop-con {
+    max-height: 600px;
+    overflow  : scroll;
+    @include scroll;
+
+    .shp-tle {
+      padding   : 5px;
+      font-size : 14px;
+      background: #ddd;
+    }
+
+    .shp-cel {
+      width     : 100%;
+      height    : auto;
+      padding   : 0 5px;
+      box-sizing: border-box;
+
+      svg {
+        overflow: visible;
+        margin  : 0 7px 5px 7px;
+        cursor  : pointer;
+
+        path {
+          stroke           : #999;
+          fill             : transparent;
+          stroke-width     : 2;
+          stroke-linecap   : butt;
+          stroke-miterlimit: 8;
+
+          &:hover {
+            stroke: rgb(0, 145, 255);
+          }
+        }
+      }
+    }
+  }
+}
