@@ -1,40 +1,28 @@
 <template>
-  <div
-    @click="activeMe"
-    ref="con"
-    :id="ele.id"
-    class="absolute text-con"
-    :style="{
-      zIndex: ele.zIndex,
-      opacity: ele.opacity,
-      top: ele.top + 'px',
-      left: ele.left + 'px',
-      width: ele.width + 'px',
-      transform: `rotateZ(${ele.angle}deg)`,
-      border: active ? '1px dashed rgb(0, 145, 255)' : '1px dashed rgba(0,0,0,0)'
-    }"
-  >
+  <div @click="activeMe" ref="con" :id="ele.id" class="absolute text-con" :style="{
+    zIndex: ele.zIndex,
+    opacity: ele.opacity,
+    top: ele.top + 'px',
+    left: ele.left + 'px',
+    width: ele.width + 'px',
+    transform: `rotateZ(${ele.angle}deg)`,
+    border: active ? '1px dashed rgb(0, 145, 255)' : '1px dashed rgba(0,0,0,0)'
+  }">
     <div @mousedown.prevent="down($event)" class="edit-con fill">
-      <div
-        ref="box"
-        class="edit-box"
-        contenteditable
-        @blur="blur"
-        :style="{
-          color: style.color,
-          background: style.background,
-          lineHeight: style.lineHeight,
-          fontSize: style.fontSize + 'px',
-          fontStyle: style.fontStyle,
-          textAlign: style.textAlign,
-          fontWeight: style.fontWeight,
-          textDecoration: style.decoration,
-          fontFamily: style.fontFamily,
-          letterSpacing: style.letterSpacing + 'px',
-          textShadow: shadow.open ? `${shadow.x}px ${shadow.y}px ${shadow.w}px ${shadow.color}` : 'none',
-          border: border.open ? `${border.width}px ${border.type} ${border.color}` : 'none'
-        }"
-      ></div>
+      <div ref="box" class="edit-box" @mousedown.stop='focusTextBox' contenteditable @blur="blur" :style="{
+        color: style.color,
+        background: style.background,
+        lineHeight: style.lineHeight,
+        fontSize: style.fontSize + 'px',
+        fontStyle: style.fontStyle,
+        textAlign: style.textAlign,
+        fontWeight: style.fontWeight,
+        textDecoration: style.decoration,
+        fontFamily: style.fontFamily,
+        letterSpacing: style.letterSpacing + 'px',
+        textShadow: shadow.open ? `${shadow.x}px ${shadow.y}px ${shadow.w}px ${shadow.color}` : 'none',
+        border: border.open ? `${border.width}px ${border.type} ${border.color}` : 'none'
+      }"></div>
     </div>
     <!-- coat -->
     <left-coat v-show="active" />
@@ -53,8 +41,8 @@ import RotateCoat from '@/components/coat/Rotate.vue'
 import { Component, Prop, Ref, Mixins, Watch } from 'vue-property-decorator'
 @Component({ components: { LeftCoat, RightCoat, RotateCoat } })
 export default class InsertText extends Mixins(MoveCoat) {
-  @Prop() readonly ele!: IText
-  @Ref('con') readonly con!: HTMLElement
+  @Prop() declare ele: IText
+  @Ref('con') declare con: HTMLElement
   @Ref('box') readonly box!: HTMLElement
 
   pptindex!: number
@@ -89,7 +77,6 @@ export default class InsertText extends Mixins(MoveCoat) {
 
   activeMe(): void {
     PPTStore.setActiveId(this.ele.id)
-    this.box.focus()
     this.pptindex = PPTStore.pptIndex
     this.eleindex = PPTStore.activeIndex
   }
@@ -109,6 +96,10 @@ export default class InsertText extends Mixins(MoveCoat) {
       })
     }
   }
+
+  focusTextBox(): void {
+    this.box.focus()
+  }
 }
 </script>
 
@@ -116,10 +107,12 @@ export default class InsertText extends Mixins(MoveCoat) {
 .text-con {
   height: auto;
   min-height: 60px;
+
   .edit-con {
     padding: 10px;
     box-sizing: border-box;
     cursor: move;
+
     .edit-box {
       width: 100%;
       min-height: 40px;

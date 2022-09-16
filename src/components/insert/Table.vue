@@ -1,55 +1,28 @@
 <template>
-  <div
-    @click="activeMe"
-    @dblclick="activeCell($event)"
-    ref="con"
-    :id="ele.id"
-    class="absolute table-con"
-    :style="{
-      zIndex: ele.zIndex,
-      opacity: ele.opacity,
-      top: ele.top + 'px',
-      left: ele.left + 'px',
-      width: width + 'px',
-      minHeight: height + 'px',
-      border: active ? '1px dashed rgb(0, 145, 255)' : '1px dashed rgba(0,0,0,0)'
-    }"
-  >
-    <table
-      @mousedown.prevent="down($event), selectDown($event)"
-      @click.right="showOptionCard"
-      class="fill"
-      :border="ele.borderWidth"
-      :style="{
+  <div @click="activeMe" @dblclick="activeCell($event)" ref="con" :id="ele.id" class="absolute table-con" :style="{
+    zIndex: ele.zIndex,
+    top: ele.top + 'px',
+    left: ele.left + 'px',
+    width: width + 'px',
+    minHeight: height + 'px',
+    border: active ? '1px dashed rgb(0, 145, 255)' : '1px dashed rgba(0,0,0,0)'
+  }">
+    <table @mousedown.prevent="down($event), selectDown($event)" @click.right="showOptionCard" class="fill"
+      :border="ele.borderWidth" :style="{
         borderColor: ele.borderColor,
         cursor: isActiveCell ? 'text' : active ? 'move' : ''
-      }"
-    >
+      }">
       <tbody>
         <tr v-for="(tds, i) in ele.table" :key="`${ele.id}_tr_${i}`">
-          <td
-            v-for="(td, j) in tds"
-            class="cell"
-            :rowspan="td.rowspan"
-            :colspan="td.colspan"
-            :style="{
+          <td v-for="(td, j) in tds" class="cell" :rowspan="td.rowspan" :colspan="td.colspan" :style="{
+            minHeight: td.height + 'px',
+            background: td.background
+          }" v-show="td.colspan !== 0" :key="`${ele.id}_tr_${i}_td_${j}`">
+            <div @focus="focusCell(i, j)" @blur="blurCell(i, j, $event)" class="cell-text" :cell="`${i},${j}`" :style="{
+              minWidth: td.width + 'px',
               minHeight: td.height + 'px',
-              background: td.backround
-            }"
-            v-show="td.colspan !== 0"
-            :key="`${ele.id}_tr_${i}_td_${j}`"
-          >
-            <div
-              @focus="focusCell(i, j)"
-              @blur="blurCell(i, j, $event)"
-              class="cell-text"
-              :cell="`${i},${j}`"
-              :style="{
-                minWidth: td.width + 'px',
-                minHeight: td.height + 'px',
-                ...cellStyle(i, j)
-              }"
-            ></div>
+              ...cellStyle(i, j)
+            }"></div>
           </td>
         </tr>
       </tbody>
@@ -62,6 +35,7 @@
 </template>
 
 <script lang="ts">
+import $ from 'jquery'
 import CombinedVueInstance from 'vue'
 import { PPTStore } from '@/store/ppt'
 import { ITable } from '@/store/pptInterface'
@@ -79,8 +53,10 @@ export default class InsertTable extends Mixins(
   TableSwitchCoat
 ) {
   $bus!: CombinedVueInstance
-  @Prop() readonly ele!: ITable
-  @Ref('con') readonly con!: HTMLElement
+  @Prop() declare ele: ITable
+  @Ref('con') declare con: HTMLElement
+
+  declare active: boolean
 
   pptindex!: number
   activeindex!: number
@@ -97,13 +73,10 @@ export default class InsertTable extends Mixins(
             `div[cell='${i},${j}']`
           ) as HTMLElement
           div.innerText = cell.content
+          // $(`div[cell='${i},${j}']`).text(cell.content)
         }
       })
     })
-  }
-
-  get active(): boolean {
-    return PPTStore.activeId === this.ele.id
   }
 
   cellStyle(i: number, j: number): Record<string, string> {
@@ -153,10 +126,11 @@ export default class InsertTable extends Mixins(
   cancelSelect(): void {
     this.ele.table.forEach((cells, i) => {
       cells.forEach((cell, j) => {
-        const editBox = this.con.querySelector(
-          `div[cell='${i},${j}']`
-        ) as HTMLElement
-        editBox.style.background = cell.background
+        // const editBox = this.con.querySelector(
+        //   `div[cell='${i},${j}']`
+        // ) as HTMLElement
+        // editBox.style.background = cell.background
+        $(`div[cell='${i},${j}']`).css('background', cell.background)
       })
     })
   }
@@ -254,17 +228,21 @@ export default class InsertTable extends Mixins(
 .table-con {
   overflow: visible;
   height: auto;
+
   table {
     width: 100%;
     height: auto;
     border-collapse: collapse;
+
     tr {
       min-height: 30px;
       height: auto;
     }
+
     .cell {
       height: auto;
     }
+
     .cell-text {
       padding: 3px 0;
       height: 100%;

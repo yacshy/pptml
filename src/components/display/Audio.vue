@@ -3,20 +3,15 @@
     <template slot="content">
       <audio ref="audio" :src="ele.url" controls class="audio"></audio>
     </template>
-    <a-icon
-      :id="ele.id"
-      class="absolute"
-      type="play-square"
-      :style="{
-        top: ele.top + 'px',
-        left: ele.left + 'px',
-        width: ele.width + 'px',
-        height: ele.height + 'px',
-        zIndex: ele.zIndex,
-        fontSize: ele.size + 'px',
-        color: ele.background
-      }"
-    />
+    <a-icon :id="ele.id" class="absolute" type="play-square" :style="{
+      top: ele.top + 'px',
+      left: ele.left + 'px',
+      width: ele.size + 'px',
+      height: ele.size + 'px',
+      zIndex: ele.zIndex,
+      fontSize: ele.size + 'px',
+      color: ele.background
+    }" />
   </a-popover>
 </template>
 

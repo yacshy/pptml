@@ -266,15 +266,13 @@ export default class Painter extends Vue {
       (this.startPosition[1] + this.endPosition[1]) / 2
     ]
 
-    delete this.line.path
-
     const data = initLine({
       id: `line_${new Date().getTime()}`,
       top: sy,
       left: sx,
       width,
       angle,
-      line: { ...this.line },
+      line: JSON.parse(JSON.stringify(this.line)),
       zIndex: PPTStore.ppt.content.length + 1,
       startPosition: this.startPosition,
       waistPosition,
@@ -305,7 +303,7 @@ export default class Painter extends Vue {
   readyToInsertVideo(url: string): void {
     const video = document.createElement('video')
     video.src = url
-    video.oncanplay = function() {
+    video.oncanplay = function () {
       const data = initVideo({
         id: `video_${new Date().getTime()}`,
         url,
@@ -334,6 +332,7 @@ export default class Painter extends Vue {
   left: 0;
   background: transparent;
   z-index: 1000;
+
   path {
     fill: transparent;
     stroke-width: 1;

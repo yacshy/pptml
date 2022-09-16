@@ -1,5 +1,5 @@
 <template>
-  <i class="absolute coat rotate" @mousedown.prevent="down"></i>
+  <i coat class="absolute coat rotate" @mousedown.prevent="down"></i>
 </template>
 
 <script lang="ts">

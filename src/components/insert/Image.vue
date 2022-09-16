@@ -1,30 +1,22 @@
 <template>
-  <div
-    ref="con"
-    :id="ele.id"
-    class="absolute"
-    :style="{
-      zIndex: ele.zIndex,
-      opacity: ele.opacity,
-      top: ele.top + 'px',
-      left: ele.left + 'px',
-      width: ele.width + 'px',
-      height: ele.height + 'px',
-      transform: `rotateZ(${ele.angle}deg)`,
-      filter
-    }"
-  >
+  <div ref="con" :id="ele.id" class="absolute" :style="{
+    zIndex: ele.zIndex,
+    opacity: ele.opacity,
+    top: ele.top + 'px',
+    left: ele.left + 'px',
+    width: ele.width + 'px',
+    height: ele.height + 'px',
+    transform: `rotateZ(${ele.angle}deg)`,
+    filter
+  }">
     <img v-show="clip" :src="ele.url" class="fill absolute mask" />
-    <div
-      class="absolute"
-      :style="{
-        top: clipCoat.top + '%',
-        left: clipCoat.left + '%',
-        width: clipCoat.width + '%',
-        height: clipCoat.height + '%',
-        border: active ? '1px dashed rgb(0, 145, 255)' : '1px dashed rgba(0,0,0,0)',
-      }"
-    >
+    <div class="absolute" :style="{
+      top: clipCoat.top + '%',
+      left: clipCoat.left + '%',
+      width: clipCoat.width + '%',
+      height: clipCoat.height + '%',
+      border: active ? '1px dashed rgb(0, 145, 255)' : '1px dashed rgba(0,0,0,0)',
+    }">
       <!-- clipping -->
       <top-clip v-show="clip" />
       <left-clip v-show="clip" />
@@ -37,21 +29,14 @@
       <rotate-coat v-show="active && !clip" />
       <bottom-coat v-show="active && !clip" />
     </div>
-    <img
-      :src="ele.url"
-      @click="activeMe"
-      @mousedown.prevent="down($event)"
-      class="ele-con absolute fill"
-      :style="{
-        clipPath: ele.clip.style
-      }"
-    />
+    <img :src="ele.url" @click="activeMe" @mousedown.prevent="down($event)" class="ele-con absolute fill" :style="{
+      clipPath: ele.clip.style
+    }" />
   </div>
 </template>
 
 <script lang="ts">
 import CombinedVueInstance from 'vue'
-import { PPTStore } from '@/store/ppt'
 import { IImage } from '@/store/pptInterface'
 import TopCoat from '@/components/coat/Top.vue'
 import MoveCoat from '@/components/coat/Move.vue'
@@ -88,12 +73,10 @@ interface IClipCoat {
 })
 export default class InsertImage extends Mixins(MoveCoat, SwitchCoat) {
   $bus!: CombinedVueInstance
-  @Prop() readonly ele!: IImage
-  @Ref('con') readonly con!: HTMLElement
+  @Prop() declare ele: IImage
+  @Ref('con') declare con: HTMLElement
 
-  get active(): boolean {
-    return PPTStore.activeId === this.ele.id
-  }
+  declare active: boolean
 
   get filter(): string {
     const shadow = this.ele.shadow
@@ -186,6 +169,7 @@ export default class InsertImage extends Mixins(MoveCoat, SwitchCoat) {
 .ele-con {
   cursor: move;
 }
+
 .mask {
   filter: brightness(60%);
 }

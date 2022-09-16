@@ -1,19 +1,10 @@
 <template>
   <div ref="screen" class="relative fill">
-    <div
-      v-for="(ppt, i) in list"
-      v-show="index === i"
-      class="absolute page"
-      :id="ppt.id"
-      ref="page"
-      :style="{
-        width: ppt.ratio.value[0] + 'px',
-        height: ppt.ratio.value[1] + 'px',
-        background: background(ppt.background),
-        transform: transform(ppt.ratio.value),
-      }"
-      :key="ppt.id"
-    >
+    <div v-for="(ppt, i) in list" v-show="index === i" class="absolute page" :id="ppt.id" ref="page" :style="{
+      width: ppt.ratio.value[0] + 'px',
+      height: ppt.ratio.value[1] + 'px',
+      background: background(ppt.background)
+    }" :key="ppt.id">
       <display-text v-for="ele in eleFilter(ppt, 'text')" :ele="ele" :key="ele.id + '_display'" />
       <display-shape v-for="ele in eleFilter(ppt, 'shape')" :ele="ele" :key="ele.id + '_display'" />
       <display-line v-for="ele in eleFilter(ppt, 'line')" :ele="ele" :key="ele.id + '_display'" />
@@ -26,7 +17,9 @@
 </template>
 
 <script lang="ts">
+import $ from 'jquery'
 import { PPTStore } from '@/store/ppt'
+import { throttle } from '@/utils/frequenEvent'
 import { IPPT, IEleType, IAnimation } from '@/store/pptInterface'
 import DisplayText from '@/components/display/Text.vue'
 import DisplayShape from '@/components/display/Shape.vue'
@@ -35,7 +28,7 @@ import DisplayImage from '@/components/display/Image.vue'
 import DisplayTable from '@/components/display/Table.vue'
 import DisplayAudio from '@/components/display/Audio.vue'
 import DisplayVideo from '@/components/display/Video.vue'
-import { Vue, Component, Ref } from 'vue-property-decorator'
+import { Vue, Component, Ref, Watch } from 'vue-property-decorator'
 
 @Component({
   components: {
@@ -52,13 +45,29 @@ export default class Display extends Vue {
   @Ref('page') readonly page!: HTMLElement
   @Ref('screen') readonly screen!: HTMLElement
   mounted(): void {
-    window.addEventListener('wheel', this.throttleForMouseWheel)
+    window.addEventListener('wheel', throttle(this.mouseWheelHandle, 500))
     this.hideEleOwnAnimation()
     this.addAnimation(0)
+    const { offsetWidth, offsetHeight } = this.screen
+    this.list.forEach(ppt => {
+      const [w, h] = ppt.ratio.value
+      $(`#${ppt.id}`).css('transform', `scale(${Math.min(offsetWidth / w, offsetHeight / h)})`)
+    })
+  }
+
+  @Watch('index')
+  indexHandle(newI: number, oldI: number): void {
+    this.screen.className = this.screen.className.replaceAll(this.animateRegExp, '')
+    const defalutAnistr = ' animate__animated animate__faster animate__'
+    if (newI > oldI) {
+      this.screen.className += `${defalutAnistr + this.ppt.switchAnimation[0]}`
+    } else {
+      this.screen.className += `${defalutAnistr + this.ppt.switchAnimation[1]}`
+    }
   }
 
   beforeDestory(): void {
-    window.removeEventListener('wheel', this.throttleForMouseWheel)
+    window.removeEventListener('wheel', this.mouseWheelHandle)
   }
 
   index = 0
@@ -88,63 +97,33 @@ export default class Display extends Vue {
       : `radial-gradient(circle farthest-corner at center, ${start}, ${end})`
   }
 
-  transform(ratio: number[]): string {
-    const [w, h] = ratio
-    if (this.screen) {
-      const cliWidth = this.screen.offsetWidth
-      const cliHeight = this.screen.offsetHeight
-      const minRatio = Math.min(cliWidth / w, cliHeight / h)
-      return `scale(${minRatio})`
-    }
-    return 'scale(1)'
-  }
-
   eleFilter(ppt: IPPT, type: string): Array<IEleType['all']> {
     return ppt.content.filter(i => i.type === type)
   }
 
   hideEleOwnAnimation(): void {
     this.list.forEach(ppt => {
-      ppt.animation
-        .slice(1)
-        .flat()
-        .forEach(ani => {
-          const ele = this.screen.querySelector(
-            `#${ani.activeId}`
-          ) as HTMLElement
-          ele.style.display = 'none'
-        })
+      ppt.animation.slice(1).flat().forEach(ani => $(`#${ani.activeId}`).hide())
     })
   }
 
   addAnimation(index: number): void {
     this.animation[index].forEach(ani => {
-      const ele = this.screen.querySelector(`#${ani.activeId}`) as HTMLElement
-      ele.style.display = 'block'
-      ele.className += ` animate__animated animate__${ani.value}`
-      setTimeout(() => {
-        ele.className = ele.className.replaceAll(this.animateRegExp, '')
-      }, 1000)
+      $.when($(`#${ani.activeId}`)).then(function (dom) {
+        dom.show().addClass('animate__animated').addClass(`animate__${ani.value}`)
+      })
     })
   }
 
   removeAnimation(index: number): void {
     this.animation[index].forEach(ani => {
-      const ele = this.screen.querySelector(`#${ani.activeId}`) as HTMLElement
-      ele.className = ele.className.replaceAll(this.animateRegExp, '')
-      ele.style.display = 'none'
+      $.when($(`#${ani.activeId}`)).then(function (dom) {
+        dom.removeClass('animate__animated').removeClass(`animate__${ani.value}`).hide()
+      })
+      // const ele = this.screen.querySelector() as HTMLElement
+      // ele.className = ele.className.replaceAll(this.animateRegExp, '')
+      // ele.style.display = 'none'
     })
-  }
-
-  timer = true
-  throttleForMouseWheel(e: WheelEvent): void {
-    if (this.timer) {
-      setTimeout(() => {
-        this.mouseWheelHandle(e)
-        this.timer = true
-      }, 500)
-      this.timer = false
-    }
   }
 
   mouseWheelHandle(e: WheelEvent): void {
@@ -185,6 +164,7 @@ export default class Display extends Vue {
   margin: auto;
   overflow: hidden;
 }
+
 .none {
   display: none;
 }

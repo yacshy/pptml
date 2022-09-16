@@ -1,5 +1,5 @@
 <template>
-  <i class="absolute clip left" @mousedown.prevent="mouseDownHandle"></i>
+  <i clip-coat class="absolute clip left" @mousedown.prevent="mouseDownHandle"></i>
 </template>
 
 <script lang="ts">

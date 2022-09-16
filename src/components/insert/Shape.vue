@@ -1,39 +1,20 @@
 <template>
-  <div
-    @click="activeMe"
-    ref="con"
-    :id="ele.id"
-    class="absolute"
-    :style="{
-      zIndex: ele.zIndex,
-      opacity: ele.opacity,
-      transform: `rotateZ(${ele.angle}deg)`,
-      top: ele.top + 'px',
-      left: ele.left + 'px',
-      width: ele.width + 'px',
-      height: ele.height + 'px',
-      border: active ? '1px dashed rgb(0, 145, 255)' : '1px dashed rgba(0,0,0,0)'
-    }"
-  >
-    <svg
-      :width="ele.width"
-      :height="ele.height"
-      @mousedown.prevent="down($event)"
-      :style="{
-        filter: shadow.open ? `drop-shadow(${shadow.color} ${shadow.x}px ${shadow.y}px ${shadow.w}px)` : 'none'
-      }"
-    >
+  <div @click="activeMe" ref="con" :id="ele.id" class="absolute" :style="{
+    zIndex: ele.zIndex,
+    opacity: ele.opacity,
+    transform: `rotateZ(${ele.angle}deg)`,
+    top: ele.top + 'px',
+    left: ele.left + 'px',
+    width: ele.width + 'px',
+    height: ele.height + 'px',
+    border: active ? '1px dashed rgb(0, 145, 255)' : '1px dashed rgba(0,0,0,0)'
+  }">
+    <svg :width="ele.width" :height="ele.height" @mousedown.prevent="down($event)" :style="{
+      filter: shadow.open ? `drop-shadow(${shadow.color} ${shadow.x}px ${shadow.y}px ${shadow.w}px)` : 'none'
+    }">
       <g :transform="`scale(${widthRatio}, ${heightRatio}) translate(0,0) matrix(1,0,0,1,0,0)`">
-        <path
-          class="shape-path"
-          vector-effect="non-scaling-stroke"
-          stroke-linecap="butt"
-          stroke-miterlimit="8"
-          :fill="ele.fill"
-          :stroke="stroke"
-          :stroke-width="strokeWidth"
-          :d="ele.path"
-        />
+        <path class="shape-path" vector-effect="non-scaling-stroke" stroke-linecap="butt" stroke-miterlimit="8"
+          :fill="ele.fill" :stroke="stroke" :stroke-width="strokeWidth" :d="ele.path" />
       </g>
     </svg>
     <!-- coat -->
@@ -59,8 +40,8 @@ import { Component, Prop, Ref, Mixins } from 'vue-property-decorator'
   components: { TopCoat, LeftCoat, RightCoat, RotateCoat, BottomCoat }
 })
 export default class InsertShape extends Mixins(SwitchCoat, MoveCoat) {
-  @Prop() readonly ele!: IShape
-  @Ref('con') readonly con!: HTMLElement
+  @Prop() declare ele: IShape
+  @Ref('con') declare con: HTMLElement
 
   get stroke(): string {
     return this.ele.border.color
@@ -88,6 +69,7 @@ export default class InsertShape extends Mixins(SwitchCoat, MoveCoat) {
 <style lang="scss" scoped>
 svg {
   overflow: visible;
+
   .shape-path {
     cursor: move;
   }

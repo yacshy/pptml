@@ -27,9 +27,9 @@ export default class EditPptSwitchAnimation extends Vue {
 
   animations = [
     { label: '无', value: ['none', 'none'] },
-    { label: '淡入淡出', value: ['fadeIn', 'fadeOut'] },
-    { label: '左右推移', value: ['slideInRight', 'slideOutLeft'] },
-    { label: '上下推移', value: ['slideInDown', 'slideOutUp'] }
+    { label: '淡入淡出', value: ['fadeIn', 'fadeIn'] },
+    { label: '左右推移', value: ['fadeInRight', 'fadeInLeft'] },
+    { label: '上下推移', value: ['fadeInUp', 'fadeInDown'] }
   ]
 
   get isActive(): number {

@@ -6,13 +6,8 @@
     </header>
     <div class="ppt-list">
       <draggable v-model="list">
-        <div
-          v-for="(ppt, index) in list"
-          @click="activeMe(ppt.id)"
-          @click.right="openRightMenu(index, $event)"
-          class="ppt flex"
-          :key="ppt.id"
-        >
+        <div v-for="(ppt, index) in list" @click="activeMe(ppt.id)" @click.right="openRightMenu(index, $event)"
+          class="ppt flex" :key="ppt.id">
           <span>{{ index > 9 ? index + 1 : `0${index+1}` }}</span>
           <div>
             <img v-show="ppt.cover" :src="ppt.cover" width="100%" height="100%" />
@@ -46,18 +41,18 @@ export default class Creator extends Vue {
       .firstChild as HTMLElement
 
     let throttleFlag = true
+    const filter = (dom: Element): boolean => dom.tagName ? dom.tagName.toUpperCase() !== 'I' : true
 
     const observer = new MutationObserver(() => {
-      if (throttleFlag) {
-        setTimeout(() => {
-          toPng(ele).then((url: string) => {
-            PPTStore.setPPTBaseInfo(afterFindPpt({ cover: url }))
-          })
-          throttleFlag = true
-        }, 200)
-      }
-      throttleFlag = false
+      if (!throttleFlag) return
+      setTimeout(() => {
+        toPng(ele, { filter }).then((url: string) => {
+          PPTStore.setPPTBaseInfo(afterFindPpt({ cover: url }))
+        })
+        throttleFlag = true
+      }, 400)
     })
+
     observer.observe(ele, {
       characterData: true,
       attributes: true,
@@ -97,6 +92,7 @@ export default class Creator extends Vue {
 
 <style lang="scss" scoped>
 @import '@/scss/hover.scss';
+
 .header {
   width: 100%;
   height: 40px;
@@ -106,26 +102,31 @@ export default class Creator extends Vue {
   border-bottom: 1px solid #ddd;
   cursor: pointer;
   @include hover;
+
   span {
     font-weight: 500;
     margin-left: 5px;
   }
 }
+
 .ppt-list {
   width: 100%;
   height: calc(100% - 41px);
   list-style: none;
+
   .ppt {
     width: 100%;
     height: 70px;
     margin-top: 10px;
     cursor: pointer;
     @include hover;
+
     span {
       width: 29px;
       text-align: center;
       line-height: 70px;
     }
+
     div {
       width: 110px;
       height: 100%;

@@ -7,8 +7,12 @@ import { Vue, Component } from 'vue-property-decorator'
 export default class TableMoveCoat extends Vue {
   ele!: ITable
   con!: HTMLElement
-  active!: boolean
   isActiveCell!: boolean
+
+  get active(): boolean {
+    return PPTStore.activeId === this.ele.id
+  }
+
   /**
    * 移动元素
    */

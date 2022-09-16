@@ -1,5 +1,5 @@
 <template>
-  <i class="absolute coat bottom" ref="icon" @mousedown.prevent="down"></i>
+  <i coat class="absolute coat bottom" ref="icon" @mousedown.prevent="down"></i>
 </template>
 
 <script lang="ts">

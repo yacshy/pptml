@@ -1,80 +1,45 @@
 <template>
-  <div
-    ref="con"
-    :id="ele.id"
-    class="absolute con"
-    :style="{
-      zIndex: ele.zIndex,
-      opacity: ele.opacity,
-      top: ele.top + 'px',
-      left: ele.left + 'px',
-      width: ele.width + 'px',
-      height: ele.height + 'px',
-      transform: `rotateZ(${ele.angle}deg)`
-    }"
-  >
-    <svg
-      @click="activeMe"
-      class="line"
-      :width="ele.width"
-      :height="ele.height"
-      @mousedown.prevent="down($event)"
-    >
+  <div ref="con" :id="ele.id" class="absolute con" :style="{
+    zIndex: ele.zIndex,
+    opacity: ele.opacity,
+    top: ele.top + 'px',
+    left: ele.left + 'px',
+    width: ele.width + 'px',
+    height: ele.height + 'px',
+    transform: `rotateZ(${ele.angle}deg)`
+  }">
+    <svg @click="activeMe" class="line" :width="ele.width" :height="ele.height" @mousedown.prevent="down($event)">
       <line-marker :ele="ele" />
       <!-- 曲线的刻度线 -->
       <g v-if="ele.line.isCurve" v-show="active">
         <path ref="curvepath" :d="curvePath" class="curve-line" />
       </g>
       <!-- 线条 -->
-      <g
-        :style="{
-          filter: shadow.open ? `drop-shadow(${shadow.color} ${shadow.x}px ${shadow.y}px ${shadow.w}px)` : 'none'
-        }"
-      >
-        <path
-          ref="path"
-          vector-effect="non-scaling-stroke"
-          :style="{
-            stroke: ele.stroke,
-            strokeWidth: ele.height,
-            ...marker
-          }"
-        />
+      <g :style="{
+        filter: shadow.open ? `drop-shadow(${shadow.color} ${shadow.x}px ${shadow.y}px ${shadow.w}px)` : 'none'
+      }">
+        <path ref="path" vector-effect="non-scaling-stroke" :style="{
+          stroke: ele.stroke,
+          strokeWidth: ele.height,
+          ...marker
+        }" />
       </g>
     </svg>
     <!-- 线条起点 -->
-    <i
-      v-show="active"
-      @mousedown.prevent="headDown($event)"
-      ref="headicon"
-      class="absolute coat line-coat"
-      :style="{
-        top: ele.height / 2 + 'px',
-        left: '0px'
-      }"
-    ></i>
+    <i v-show="active" @mousedown.prevent="headDown($event)" ref="headicon" class="absolute coat line-coat" :style="{
+      top: ele.height / 2 + 'px',
+      left: '0px'
+    }"></i>
     <!-- 只有曲线才有的 -->
-    <i
-      v-if="ele.line.isCurve || ele.line.isBroken"
-      v-show="active"
-      @mousedown.prevent="curveDown($event)"
-      ref="curveicon"
-      class="absolute coat line-coat"
-      :style="{
+    <i v-if="ele.line.isCurve || ele.line.isBroken" v-show="active" @mousedown.prevent="curveDown($event)"
+      ref="curveicon" class="absolute coat line-coat" :style="{
         ...curveIconStyle
-      }"
-    ></i>
+      }"></i>
     <!-- 线条终点 -->
-    <i
-      v-show="active"
-      @mousedown.prevent="footDown($event)"
-      ref="footicon"
-      class="absolute coat line-coat"
-      :style="{
-        top: ele.height / 2 + 'px',
-        right: '-12px'
-      }"
-    ></i>
+    <i v-show="active" @mousedown.prevent="footDown($event)" ref="footicon" class="absolute coat line-coat" :style="{
+      top: ele.height / 2 + 'px',
+      right: '-12px'
+    }"></i>
   </div>
 </template>
 
@@ -95,8 +60,8 @@ import { Component, Prop, Ref, Mixins } from 'vue-property-decorator'
   components: { LineMarker }
 })
 export default class InsertLine extends Mixins(SwitchCoat, MoveCoat) {
-  @Prop() readonly ele!: ILine
-  @Ref('con') readonly con!: HTMLElement
+  @Prop() declare ele: ILine
+  @Ref('con') declare con: HTMLElement
   @Ref('path') readonly path!: HTMLElement
   @Ref('headicon') readonly headicon!: HTMLElement
   @Ref('footicon') readonly footicon!: HTMLElement
@@ -307,14 +272,17 @@ export default class InsertLine extends Mixins(SwitchCoat, MoveCoat) {
 <style lang="scss" scoped>
 .con {
   transform-origin: 0;
+
   .line {
     fill: transparent;
     overflow: visible;
     // 我不知道为什么画出来的线会和画的轨迹有偏移，此处不得已做-15px（此数字由目测得出）的误差纠正，具体原因日后细查 2022-08-19
     transform: translateY(-15px);
+
     path {
       cursor: move;
     }
+
     .curve-line {
       stroke: rgb(0, 145, 255);
       stroke-width: 1;
@@ -322,6 +290,7 @@ export default class InsertLine extends Mixins(SwitchCoat, MoveCoat) {
       fill: transparent;
     }
   }
+
   .line-coat {
     transform: translateX(-50%) translateY(-50%);
   }
