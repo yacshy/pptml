@@ -1,17 +1,53 @@
 <template>
   <div ref="screen" class="relative fill">
-    <div v-for="(ppt, i) in list" v-show="index === i" class="absolute page" :id="ppt.id" ref="page" :style="{
-      width: ppt.ratio.value[0] + 'px',
-      height: ppt.ratio.value[1] + 'px',
-      background: background(ppt.background)
-    }" :key="ppt.id">
-      <display-text v-for="ele in eleFilter(ppt, 'text')" :ele="ele" :key="ele.id + '_display'" />
-      <display-shape v-for="ele in eleFilter(ppt, 'shape')" :ele="ele" :key="ele.id + '_display'" />
-      <display-line v-for="ele in eleFilter(ppt, 'line')" :ele="ele" :key="ele.id + '_display'" />
-      <display-image v-for="ele in eleFilter(ppt, 'image')" :ele="ele" :key="ele.id + '_display'" />
-      <display-table v-for="ele in eleFilter(ppt, 'table')" :ele="ele" :key="ele.id + '_display'" />
-      <display-audio v-for="ele in eleFilter(ppt, 'audio')" :ele="ele" :key="ele.id + '_display'" />
-      <display-video v-for="ele in eleFilter(ppt, 'video')" :ele="ele" :key="ele.id + '_display'" />
+    <div
+      v-for="(ppt, i) in list"
+      v-show="index === i"
+      class="absolute page"
+      :id="ppt.id"
+      ref="page"
+      :style="{
+        width: ppt.ratio.value[0] + 'px',
+        height: ppt.ratio.value[1] + 'px',
+        background: background(ppt.background),
+      }"
+      :key="ppt.id"
+    >
+      <display-text
+        v-for="ele in eleFilter(ppt, 'text')"
+        :ele="ele"
+        :key="ele.id + '_display'"
+      />
+      <display-shape
+        v-for="ele in eleFilter(ppt, 'shape')"
+        :ele="ele"
+        :key="ele.id + '_display'"
+      />
+      <display-line
+        v-for="ele in eleFilter(ppt, 'line')"
+        :ele="ele"
+        :key="ele.id + '_display'"
+      />
+      <display-image
+        v-for="ele in eleFilter(ppt, 'image')"
+        :ele="ele"
+        :key="ele.id + '_display'"
+      />
+      <display-table
+        v-for="ele in eleFilter(ppt, 'table')"
+        :ele="ele"
+        :key="ele.id + '_display'"
+      />
+      <display-audio
+        v-for="ele in eleFilter(ppt, 'audio')"
+        :ele="ele"
+        :key="ele.id + '_display'"
+      />
+      <display-video
+        v-for="ele in eleFilter(ppt, 'video')"
+        :ele="ele"
+        :key="ele.id + '_display'"
+      />
     </div>
   </div>
 </template>
@@ -42,22 +78,28 @@ import { Vue, Component, Ref, Watch } from 'vue-property-decorator'
   }
 })
 export default class Display extends Vue {
-  @Ref('page') readonly page!: HTMLElement
-  @Ref('screen') readonly screen!: HTMLElement
+  @Ref('page') readonly page!: HTMLElement;
+  @Ref('screen') readonly screen!: HTMLElement;
   mounted(): void {
     window.addEventListener('wheel', throttle(this.mouseWheelHandle, 500))
     this.hideEleOwnAnimation()
     this.addAnimation(0)
     const { offsetWidth, offsetHeight } = this.screen
-    this.list.forEach(ppt => {
+    this.list.forEach((ppt) => {
       const [w, h] = ppt.ratio.value
-      $(`#${ppt.id}`).css('transform', `scale(${Math.min(offsetWidth / w, offsetHeight / h)})`)
+      $(`#${ppt.id}`).css(
+        'transform',
+        `scale(${Math.min(offsetWidth / w, offsetHeight / h)})`
+      )
     })
   }
 
   @Watch('index')
   indexHandle(newI: number, oldI: number): void {
-    this.screen.className = this.screen.className.replaceAll(this.animateRegExp, '')
+    this.screen.className = this.screen.className.replaceAll(
+      this.animateRegExp,
+      ''
+    )
     const defalutAnistr = ' animate__animated animate__faster animate__'
     if (newI > oldI) {
       this.screen.className += `${defalutAnistr + this.ppt.switchAnimation[0]}`
@@ -70,9 +112,9 @@ export default class Display extends Vue {
     window.removeEventListener('wheel', this.mouseWheelHandle)
   }
 
-  index = 0
-  aniIndex = 0
-  animateRegExp = / animate__([a-zA-Z].+)/g
+  index = 0;
+  aniIndex = 0;
+  animateRegExp = / animate__([a-zA-Z].+)/g;
 
   get list(): IPPT[] {
     return PPTStore.list
@@ -98,27 +140,36 @@ export default class Display extends Vue {
   }
 
   eleFilter(ppt: IPPT, type: string): Array<IEleType['all']> {
-    return ppt.content.filter(i => i.type === type)
+    return ppt.content.filter((i) => i.type === type)
   }
 
   hideEleOwnAnimation(): void {
-    this.list.forEach(ppt => {
-      ppt.animation.slice(1).flat().forEach(ani => $(`#${ani.activeId}`).hide())
+    this.list.forEach((ppt) => {
+      ppt.animation
+        .slice(1)
+        .flat()
+        .forEach((ani) => $(`#${ani.activeId}`).hide())
     })
   }
 
   addAnimation(index: number): void {
-    this.animation[index].forEach(ani => {
+    this.animation[index].forEach((ani) => {
       $.when($(`#${ani.activeId}`)).then(function (dom) {
-        dom.show().addClass('animate__animated').addClass(`animate__${ani.value}`)
+        dom
+          .show()
+          .addClass('animate__animated')
+          .addClass(`animate__${ani.value}`)
       })
     })
   }
 
   removeAnimation(index: number): void {
-    this.animation[index].forEach(ani => {
+    this.animation[index].forEach((ani) => {
       $.when($(`#${ani.activeId}`)).then(function (dom) {
-        dom.removeClass('animate__animated').removeClass(`animate__${ani.value}`).hide()
+        dom
+          .removeClass('animate__animated')
+          .removeClass(`animate__${ani.value}`)
+          .hide()
       })
       // const ele = this.screen.querySelector() as HTMLElement
       // ele.className = ele.className.replaceAll(this.animateRegExp, '')

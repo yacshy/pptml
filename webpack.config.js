@@ -6,7 +6,7 @@ module.exports = {
   entry: './path/to/my/entry/file.js',
   output: {
     filename: 'my-first-webpack.bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'docs')
   },
   module: {
     rules: [
