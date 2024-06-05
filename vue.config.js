@@ -1,4 +1,4 @@
 module.exports = {
-  publicPath: './pptml',
+  publicPath: './',
   outputDir: 'docs'
 }
